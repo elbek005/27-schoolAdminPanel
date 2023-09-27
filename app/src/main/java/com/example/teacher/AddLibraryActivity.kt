@@ -1,11 +1,15 @@
 package com.example.teacher
 
+import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Patterns
 import android.widget.EditText
+import android.widget.Toast
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import com.example.teacher.databinding.ActivityAddClassBinding
 import com.example.teacher.databinding.ActivityAddLibraryBinding
 import com.google.firebase.database.FirebaseDatabase
@@ -30,9 +34,7 @@ class AddLibraryActivity : AppCompatActivity() {
         }
     }
 
-    private fun pdfAdd() {
 
-    }
 
     private fun uploadFireBaseData() {
         val title = binding.dialogTextTitle.text.toString().trim()
@@ -78,7 +80,31 @@ class AddLibraryActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun pdfAdd() {
+        val i = Intent()
+        i.type = "application/pdf"
+        i.action = Intent.ACTION_GET_CONTENT
+        pdfActivityResultLauncher.launch(i)
+    }
+
+
+    private var pdfActivityResultLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult(),
+            ActivityResultCallback { result ->
+                if (result.resultCode == RESULT_OK) {
+                    pdfUri = result.data!!.data
+
+                } else {
+                    Toast.makeText(this, "pdf error", Toast.LENGTH_SHORT).show()
+                }
+
+            })
+
+
 }
+
 
 
 
